@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { toast } from 'sonner';
-import { GraduationCap, Mail, Lock } from 'lucide-react';
+import { Store, Mail, Lock } from 'lucide-react';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -41,10 +41,12 @@ export const LoginPage = () => {
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-center justify-center mb-3 sm:mb-4">
-            <div className="flex items-center space-x-2 text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">
-              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8" />
-              <span>CampusMarket</span>
-            </div>
+            {/* <div className="flex items-center space-x-2 text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-400 via-blue-400 to-slate-500 bg-clip-text text-transparent animate-gradient-x">
+              <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gradient-to-r from-slate-400 via-blue-400 to-slate-500 rounded-lg flex items-center justify-center animate-gradient-x">
+                <Store className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
+              <span className="logo-font">Rungta-ShelfIt</span>
+            </div> */}
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Welcome Back</h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Sign in to your student account</p>
@@ -58,13 +60,13 @@ export const LoginPage = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="dark:text-white">University Email</Label>
+                <Label htmlFor="email" className="dark:text-white">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="your.email@university.edu"
+                    placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
@@ -107,13 +109,7 @@ export const LoginPage = () => {
               </p>
 
               {/* Demo Info */}
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                <p className="text-sm text-blue-800 dark:text-blue-200 font-medium mb-2">Demo Account:</p>
-                <p className="text-xs text-blue-700 dark:text-blue-300">
-                  Email: sarah.chen@university.edu<br />
-                  Password: Any password works
-                </p>
-              </div>
+             
             </div>
           </CardContent>
         </Card>

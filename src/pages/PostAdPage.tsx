@@ -267,41 +267,27 @@ export const PostAdPage = () => {
               </div>
             </div>
 
-            {/* Location and Contact */}
+            {/* Location */}
             <div className="space-y-4">
               <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center">
                 <div className="w-1 h-6 bg-blue-500 rounded-full mr-3"></div>
-                Location & Contact
+                Location
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="location" className="text-foreground font-medium">Location *</Label>
-                  <Select value={formData.location} onValueChange={(value) => setFormData({ ...formData, location: value })}>
-                    <SelectTrigger className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20">
-                      <SelectValue placeholder="Select location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Campus North">Campus North</SelectItem>
-                      <SelectItem value="Campus South">Campus South</SelectItem>
-                      <SelectItem value="Campus East">Campus East</SelectItem>
-                      <SelectItem value="Campus West">Campus West</SelectItem>
-                      <SelectItem value="Off-Campus">Off-Campus</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="contact" className="text-foreground font-medium">Contact Number</Label>
-                  <Input
-                    id="contact"
-                    type="tel"
-                    value={formData.contact}
-                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                    placeholder="+91 98765 43210"
-                    className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="location" className="text-foreground font-medium">Location *</Label>
+                <Select value={formData.location} onValueChange={(value) => setFormData({ ...formData, location: value })}>
+                  <SelectTrigger className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20">
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Campus North">Campus North</SelectItem>
+                    <SelectItem value="Campus South">Campus South</SelectItem>
+                    <SelectItem value="Campus East">Campus East</SelectItem>
+                    <SelectItem value="Campus West">Campus West</SelectItem>
+                    <SelectItem value="Off-Campus">Off-Campus</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

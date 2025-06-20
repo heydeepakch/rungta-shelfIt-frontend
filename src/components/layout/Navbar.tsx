@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '../ui/dropdown-menu';
-import { GraduationCap, Search, Plus, User, LogOut, Menu, X } from 'lucide-react';
+import { Store, Search, Plus, User, LogOut, Menu, X } from 'lucide-react';
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
@@ -45,12 +45,14 @@ export const Navbar = () => {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center space-x-2 text-xl sm:text-2xl font-bold text-blue-600"
+            className="flex items-center space-x-2 text-xl sm:text-2xl font-bold bg-gradient-to-r from-slate-400 via-blue-400 to-slate-500 bg-clip-text text-transparent animate-gradient-x"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8" />
-            <span className="hidden sm:inline">CampusMarket</span>
-            <span className="sm:hidden">CM</span>
+            <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gradient-to-r from-slate-400 via-blue-400 to-slate-500 rounded-lg flex items-center justify-center animate-gradient-x">
+              <Store className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+            </div>
+            <span className="hidden sm:inline logo-font">Rungta-ShelfIt</span>
+            <span className="sm:hidden text-2xl font-extrabold">RS</span>
           </Link>
 
           {/* Desktop Search Bar */}

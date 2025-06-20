@@ -7,7 +7,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
-import { GraduationCap, Mail, Lock, User, Building, BookOpen, MapPin } from 'lucide-react';
+import { Store, Mail, Lock, User, Building, BookOpen, MapPin } from 'lucide-react';
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -55,7 +55,7 @@ export const RegisterPage = () => {
       });
 
       if (success) {
-        toast.success('Account created successfully! Welcome to CampusMarket!');
+        toast.success('Account created successfully! Welcome to Rungta-ShelfIt!');
         navigate('/');
       } else {
         toast.error('Registration failed. Please try again.');
@@ -73,12 +73,14 @@ export const RegisterPage = () => {
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
           <div className="flex items-center justify-center mb-3 sm:mb-4">
-            <div className="flex items-center space-x-2 text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">
-              <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8" />
-              <span>CampusMarket</span>
-            </div>
+            {/* <div className="flex items-center space-x-2 text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-400 via-blue-400 to-slate-500 bg-clip-text text-transparent animate-gradient-x">
+              <div className="h-6 w-6 sm:h-8 sm:w-8 bg-gradient-to-r from-slate-400 via-blue-400 to-slate-500 rounded-lg flex items-center justify-center animate-gradient-x">
+                <Store className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+              </div>
+              <span className="logo-font">Rungta-ShelfIt</span>
+            </div> */}
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Join CampusMarket</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Join Rungta-ShelfIt</h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Create your student account to start buying and selling</p>
         </div>
 
@@ -106,13 +108,13 @@ export const RegisterPage = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="dark:text-white">University Email</Label>
+                <Label htmlFor="email" className="dark:text-white">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="your.email@university.edu"
+                    placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
@@ -139,7 +141,7 @@ export const RegisterPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="dark:text-white">Confirm</Label>
+                  <Label htmlFor="confirmPassword" className="dark:text-white">Confirm Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "user1",
+    "email": "sarah.chen@university.edu",
+    "name": "Sarah Chen",
+    "college": "State University",
+    "major": "Computer Science",
+    "year": "Junior",
+    "avatar": "/images/avatar1.jpg",
+    "joinDate": "2024-09-01T00:00:00Z",
+    "verified": true,
+    "rating": 4.8,
+    "totalSales": 12,
+    "location": "Campus North"
+  },
+  {
+    "id": "user2",
+    "email": "mike.j@university.edu",
+    "name": "Mike Johnson",
+    "college": "State University",
+    "major": "Business",
+    "year": "Senior",
+    "avatar": "/images/avatar2.jpg",
+    "joinDate": "2024-08-15T00:00:00Z",
+    "verified": true,
+    "rating": 4.9,
+    "totalSales": 8,
+    "location": "Campus South"
+  },
+  {
+    "id": "user3",
+    "email": "emma.w@university.edu",
+    "name": "Emma Wilson",
+    "college": "State University",
+    "major": "Psychology",
+    "year": "Sophomore",
+    "avatar": "/images/avatar3.jpg",
+    "joinDate": "2024-01-10T00:00:00Z",
+    "verified": true,
+    "rating": 4.7,
+    "totalSales": 15,
+    "location": "Off-Campus"
+  }
+]

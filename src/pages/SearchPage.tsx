@@ -97,19 +97,19 @@ export const SearchPage = () => {
   return (
     <div className="space-y-6">
       {/* Search Header */}
-      <div className="bg-white rounded-lg p-6 shadow-sm border">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 rounded-lg p-6 shadow-sm border border-slate-600/50 backdrop-blur-sm">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search Input */}
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4 z-10" />
               <Input
                 type="text"
                 placeholder="Search for items..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="pl-10"
+                className="pl-10 bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20"
               />
             </div>
           </div>
@@ -117,7 +117,7 @@ export const SearchPage = () => {
           {/* Category Filter */}
           <div className="w-full lg:w-48">
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger>
+              <SelectTrigger className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20">
                 <SelectValue placeholder="All categories" />
               </SelectTrigger>
               <SelectContent>
@@ -135,7 +135,7 @@ export const SearchPage = () => {
           <Button
             variant="outline"
             onClick={() => setShowFilters(!showFilters)}
-            className="lg:w-auto"
+            className="lg:w-auto border-slate-600/50 hover:bg-slate-700/50"
           >
             <SlidersHorizontal className="h-4 w-4 mr-2" />
             Filters
@@ -149,13 +149,13 @@ export const SearchPage = () => {
 
         {/* Expanded Filters */}
         {showFilters && (
-          <div className="mt-4 pt-4 border-t space-y-4">
+          <div className="mt-4 pt-4 border-t border-slate-600/50 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Sort By */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Sort by</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Sort by</label>
                 <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -170,9 +170,9 @@ export const SearchPage = () => {
 
               {/* Condition */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Condition</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Condition</label>
                 <Select value={selectedCondition} onValueChange={setSelectedCondition}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20">
                     <SelectValue placeholder="Any condition" />
                   </SelectTrigger>
                   <SelectContent>
@@ -188,29 +188,29 @@ export const SearchPage = () => {
 
               {/* Price Range */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Min Price</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Min Price</label>
                 <Input
                   type="number"
                   placeholder="₹0"
                   value={priceRange.min || ''}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-                  className="w-full"
+                  className="w-full bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20"
                 />
               </div>
-              <div className="text-gray-500">to</div>
+              <div className="text-slate-400">to</div>
               <div className="flex-1">
                 <Input
                   type="number"
                   placeholder="₹1000"
                   value={priceRange.max || ''}
                   onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                  className="w-full"
+                  className="w-full bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20"
                 />
               </div>
             </div>
 
             <div className="flex justify-end">
-              <Button variant="outline" onClick={clearFilters}>
+              <Button variant="outline" onClick={clearFilters} className="border-slate-600/50 hover:bg-slate-700/50">
                 Clear all filters
               </Button>
             </div>
@@ -226,7 +226,7 @@ export const SearchPage = () => {
               Search: "{searchQuery}"
               <button
                 onClick={() => setSearchQuery('')}
-                className="ml-1 hover:bg-gray-300 rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                className="ml-1 hover:bg-muted rounded-full w-4 h-4 flex items-center justify-center text-xs"
               >
                 ×
               </button>
@@ -237,7 +237,7 @@ export const SearchPage = () => {
               Category: {getCategoryName(selectedCategory)}
               <button
                 onClick={() => setSelectedCategory('')}
-                className="ml-1 hover:bg-gray-300 rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                className="ml-1 hover:bg-muted rounded-full w-4 h-4 flex items-center justify-center text-xs"
               >
                 ×
               </button>
@@ -248,7 +248,7 @@ export const SearchPage = () => {
               Condition: {selectedCondition}
               <button
                 onClick={() => setSelectedCondition('')}
-                className="ml-1 hover:bg-gray-300 rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                className="ml-1 hover:bg-muted rounded-full w-4 h-4 flex items-center justify-center text-xs"
               >
                 ×
               </button>
@@ -259,7 +259,7 @@ export const SearchPage = () => {
               Price: ₹{priceRange.min || '0'} - ₹{priceRange.max || '∞'}
               <button
                 onClick={() => setPriceRange({ min: '', max: '' })}
-                className="ml-1 hover:bg-gray-300 rounded-full w-4 h-4 flex items-center justify-center text-xs"
+                className="ml-1 hover:bg-muted rounded-full w-4 h-4 flex items-center justify-center text-xs"
               >
                 ×
               </button>
@@ -271,10 +271,10 @@ export const SearchPage = () => {
       {/* Results */}
       <div>
         <div className="text-center mb-6 sm:mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
             {searchQuery ? `Search Results for "${searchQuery}"` : 'Browse All Items'}
           </h2>
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-sm sm:text-base text-muted-foreground">
             {searchQuery
               ? `Found ${filteredAds.length} item${filteredAds.length !== 1 ? 's' : ''}`
               : 'Discover great deals from your college community'
@@ -283,7 +283,7 @@ export const SearchPage = () => {
         </div>
 
         <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-2xl font-bold text-gray-900">
+          <h2 className="text-lg sm:text-2xl font-bold text-foreground">
             {filteredAds.length} {filteredAds.length === 1 ? 'item' : 'items'} found
           </h2>
         </div>
@@ -295,20 +295,20 @@ export const SearchPage = () => {
             ))}
           </div>
         ) : (
-          <Card>
+          <Card className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-slate-600/50 backdrop-blur-sm">
             <CardContent className="py-12 sm:py-16 text-center">
               <div className="flex flex-col items-center space-y-4">
-                <div className="w-16 h-16 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Search className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400" />
+                <div className="w-16 h-16 sm:w-24 sm:h-24 bg-slate-700/30 rounded-full flex items-center justify-center">
+                  <Search className="h-8 w-8 sm:h-12 sm:w-12 text-slate-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No items found</h3>
-                  <p className="text-sm sm:text-base text-gray-600 max-w-md">
+                  <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">No items found</h3>
+                  <p className="text-sm sm:text-base text-slate-400 max-w-md">
                     We couldn't find any items matching your search criteria.
                     Try adjusting your filters or search terms.
                   </p>
                 </div>
-                <Button onClick={clearFilters} variant="outline">
+                <Button onClick={clearFilters} variant="outline" className="border-slate-600/50 hover:bg-slate-700/50">
                   Clear all filters
                 </Button>
               </div>

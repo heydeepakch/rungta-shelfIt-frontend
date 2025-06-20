@@ -138,12 +138,15 @@ export const EditAdPage = () => {
         setSaving(true);
 
         try {
+            // Find the category object by ID
+            const categoryObj = categories.find(cat => cat._id === formData.category);
+
             // Prepare update data
             const updateData: Partial<Ad> = {
                 title: formData.title,
                 description: formData.description,
                 price: Number(formData.price),
-                category: formData.category,
+                category: categoryObj!,
                 condition: formData.condition,
                 location: formData.location,
                 status: formData.status
@@ -177,8 +180,8 @@ export const EditAdPage = () => {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Ad not found</h2>
-                    <p className="text-gray-600 mb-4">The ad you're trying to edit doesn't exist or has been removed.</p>
+                    <h2 className="text-2xl font-bold text-foreground mb-2">Ad not found</h2>
+                    <p className="text-muted-foreground mb-4">The ad you're trying to edit doesn't exist or has been removed.</p>
                     <Button onClick={() => navigate('/')} variant="outline">
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to Home
@@ -189,101 +192,84 @@ export const EditAdPage = () => {
     }
 
     return (
-        <div className="max-w-2xl mx-auto">
-            <div className="mb-6 sm:mb-8">
-                <Button
-                    variant="ghost"
-                    onClick={() => navigate(`/ad/${ad._id}`)}
-                    className="mb-4"
-                >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to Ad
-                </Button>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Edit Ad</h1>
-                <p className="text-sm sm:text-base text-gray-600">Update your listing information</p>
+        <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+            <div className="text-center mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">Edit Ad</h1>
+                <p className="text-muted-foreground">Update your listing information</p>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Edit Item Details</CardTitle>
-                </CardHeader>
-                <CardContent>
+            <Card className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-slate-600/50 backdrop-blur-sm">
+                <CardContent className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Title */}
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Title *</Label>
-                            <div className="relative">
-                                <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                                <Input
-                                    id="title"
-                                    type="text"
-                                    placeholder="e.g., Calculus Textbook - Stewart 8th Edition"
-                                    value={formData.title}
-                                    onChange={(e) => handleChange('title', e.target.value)}
-                                    className="pl-10"
-                                    required
-                                />
-                            </div>
-                        </div>
+                        {/* Basic Information */}
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center">
+                                <div className="w-1 h-6 bg-blue-500 rounded-full mr-3"></div>
+                                Basic Information
+                            </h2>
 
-                        {/* Description */}
-                        <div className="space-y-2">
-                            <Label htmlFor="description">Description *</Label>
-                            <Textarea
-                                id="description"
-                                placeholder="Describe your item's condition, features, and why someone should buy it..."
-                                value={formData.description}
-                                onChange={(e) => handleChange('description', e.target.value)}
-                                rows={4}
-                                required
-                            />
-                        </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="title" className="text-foreground font-medium">Title *</Label>
+                                    <Input
+                                        id="title"
+                                        value={formData.title}
+                                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                        placeholder="e.g., MacBook Pro 2021, Chemistry Textbook"
+                                        className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20"
+                                        required
+                                    />
+                                </div>
 
-                        {/* Price and Category */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="price">Price *</Label>
-                                <div className="relative">
-                                    <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                                <div className="space-y-2">
+                                    <Label htmlFor="price" className="text-foreground font-medium">Price (₹) *</Label>
                                     <Input
                                         id="price"
                                         type="number"
-                                        placeholder="0.00"
                                         value={formData.price}
-                                        onChange={(e) => handleChange('price', e.target.value)}
-                                        className="pl-10"
+                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                        placeholder="500"
                                         min="0"
-                                        step="0.01"
+                                        className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20"
                                         required
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="category">Category *</Label>
-                                <Select value={formData.category} onValueChange={(value) => handleChange('category', value)}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categories.map((category) => (
-                                            <SelectItem key={category._id} value={category._id}>
-                                                {category.icon} {category.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <Label htmlFor="description" className="text-foreground font-medium">Description *</Label>
+                                <Textarea
+                                    id="description"
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    placeholder="Describe your item in detail..."
+                                    rows={4}
+                                    className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20"
+                                    required
+                                />
                             </div>
-                        </div>
 
-                        {/* Condition and Location */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="condition">Condition</Label>
-                                <div className="relative">
-                                    <Package className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                                    <Select value={formData.condition} onValueChange={(value) => handleChange('condition', value)}>
-                                        <SelectTrigger className="pl-10">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="category" className="text-foreground font-medium">Category *</Label>
+                                    <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                                        <SelectTrigger className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20">
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories.map((category) => (
+                                                <SelectItem key={category._id} value={category._id}>
+                                                    {category.icon} {category.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="condition" className="text-foreground font-medium">Condition *</Label>
+                                    <Select value={formData.condition} onValueChange={(value) => setFormData({ ...formData, condition: value })}>
+                                        <SelectTrigger className="bg-slate-700/50 border-slate-600/50 focus:border-blue-400 focus:ring-blue-400/20">
                                             <SelectValue placeholder="Select condition" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -292,58 +278,26 @@ export const EditAdPage = () => {
                                             <SelectItem value="Excellent">Excellent</SelectItem>
                                             <SelectItem value="Good">Good</SelectItem>
                                             <SelectItem value="Fair">Fair</SelectItem>
-                                            <SelectItem value="Poor">Poor</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                             </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="location">Location</Label>
-                                <div className="relative">
-                                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                                    <Select value={formData.location} onValueChange={(value) => handleChange('location', value)}>
-                                        <SelectTrigger className="pl-10">
-                                            <SelectValue placeholder={user?.location || 'Select location'} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Campus North">Campus North</SelectItem>
-                                            <SelectItem value="Campus South">Campus South</SelectItem>
-                                            <SelectItem value="Campus East">Campus East</SelectItem>
-                                            <SelectItem value="Campus West">Campus West</SelectItem>
-                                            <SelectItem value="Off-Campus">Off-Campus</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Status */}
-                        <div className="space-y-2">
-                            <Label htmlFor="status">Status</Label>
-                            <Select value={formData.status} onValueChange={(value: 'active' | 'sold' | 'pending') => handleChange('status', value)}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="active">Active</SelectItem>
-                                    <SelectItem value="sold">Sold</SelectItem>
-                                    <SelectItem value="pending">Pending</SelectItem>
-                                </SelectContent>
-                            </Select>
                         </div>
 
                         {/* Current Images */}
                         {imagePreviews.length > 0 && (
-                            <div className="space-y-2">
-                                <Label>Current Images</Label>
+                            <div className="space-y-4">
+                                <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center">
+                                    <div className="w-1 h-6 bg-blue-500 rounded-full mr-3"></div>
+                                    Current Images
+                                </h2>
                                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
                                     {imagePreviews.map((preview, index) => (
                                         <div key={index} className="relative group">
                                             <img
                                                 src={preview}
                                                 alt={`Current ${index + 1}`}
-                                                className="w-32 h-32 object-cover rounded-lg border"
+                                                className="w-32 h-32 object-cover rounded-lg border border-slate-600/50"
                                             />
                                             <button
                                                 type="button"
@@ -356,20 +310,23 @@ export const EditAdPage = () => {
                                         </div>
                                     ))}
                                 </div>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-muted-foreground">
                                     {imagePreviews.length} current image{imagePreviews.length !== 1 ? 's' : ''}
                                 </p>
                             </div>
                         )}
 
                         {/* Add New Images */}
-                        <div className="space-y-2">
-                            <Label htmlFor="images">Add New Images (Optional)</Label>
-                            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                                <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                        <div className="space-y-4">
+                            <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center">
+                                <div className="w-1 h-6 bg-blue-500 rounded-full mr-3"></div>
+                                Add New Images (Optional)
+                            </h2>
+                            <div className="border-2 border-dashed border-slate-500/50 rounded-lg p-6 text-center hover:border-blue-400/50 transition-colors bg-slate-700/30">
+                                <Upload className="mx-auto h-12 w-12 text-slate-400" />
                                 <div className="mt-4">
                                     <label htmlFor="image-upload" className="cursor-pointer">
-                                        <span className="text-blue-600 hover:text-blue-500 font-medium">
+                                        <span className="text-blue-400 hover:text-blue-300 font-medium">
                                             Add more photos
                                         </span>
                                         <input
@@ -381,8 +338,14 @@ export const EditAdPage = () => {
                                             multiple
                                         />
                                     </label>
-                                    <p className="text-gray-500 text-sm mt-1">
-                                        Add up to 5 photos total (max 5MB each)
+                                    <p className="text-sm text-slate-400">
+                                        Add up to 5 photos (max 5MB each) to help your item sell faster
+                                    </p>
+                                    <p className="text-slate-400 text-sm mt-1">
+                                        Supported formats: JPG, PNG, GIF, WebP
+                                    </p>
+                                    <p className="text-sm text-slate-400 mt-2">
+                                        {imagePreviews.length} of 5 images uploaded
                                     </p>
                                 </div>
                             </div>
@@ -395,7 +358,7 @@ export const EditAdPage = () => {
                                                 <img
                                                     src={URL.createObjectURL(file)}
                                                     alt={`New ${index + 1}`}
-                                                    className="w-32 h-32 object-cover rounded-lg border"
+                                                    className="w-32 h-32 object-cover rounded-lg border border-slate-600/50"
                                                 />
                                                 <button
                                                     type="button"
@@ -405,34 +368,22 @@ export const EditAdPage = () => {
                                                 >
                                                     <X className="w-3 h-3" />
                                                 </button>
-                                                <div className="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white text-xs px-1 py-0.5 rounded">
-                                                    {((file.size) / (1024 * 1024)).toFixed(1)}MB
-                                                </div>
                                             </div>
                                         ))}
                                     </div>
-                                    <p className="text-sm text-gray-500 mt-2">
+                                    <p className="text-sm text-slate-400 mt-2">
                                         {newImages.length} new image{newImages.length !== 1 ? 's' : ''} to add
                                     </p>
                                 </div>
                             )}
                         </div>
 
-                        {/* Submit Buttons */}
-                        <div className="flex gap-4 pt-6">
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => navigate(`/ad/${ad._id}`)}
-                                className="flex-1"
-                            >
+                        {/* Submit Button */}
+                        <div className="flex justify-end space-x-4 pt-6 border-t border-slate-600/50">
+                            <Button type="button" variant="outline" onClick={() => navigate(`/ad/${ad._id}`)} className="border-slate-600/50 hover:bg-slate-700/50">
                                 Cancel
                             </Button>
-                            <Button
-                                type="submit"
-                                className="flex-1 bg-blue-600 hover:bg-blue-700"
-                                disabled={saving}
-                            >
+                            <Button type="submit" disabled={saving} className="bg-blue-600 hover:bg-blue-700">
                                 {saving ? 'Saving...' : 'Save Changes'}
                             </Button>
                         </div>

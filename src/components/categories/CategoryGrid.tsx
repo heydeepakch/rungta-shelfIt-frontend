@@ -11,7 +11,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
   if (!categories || categories.length === 0) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-500">No categories available</p>
+        <p className="text-slate-400">No categories available</p>
       </div>
     );
   }
@@ -27,15 +27,15 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({ categories }) => {
 
         return (
           <Link key={category._id} to={`/search?category=${category._id}`}>
-            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer dark:bg-gray-800 dark:border-gray-700">
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-slate-600/50 backdrop-blur-sm hover:border-blue-400/50">
               <CardContent className="p-4 sm:p-6 text-center">
                 <div className="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">
                   {category.icon || '📦'}
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h3 className="font-semibold text-foreground text-sm sm:text-base group-hover:text-blue-400 transition-colors">
                   {category.name || 'Unknown Category'}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
+                <p className="text-xs sm:text-sm text-slate-400 mt-1 line-clamp-2">
                   {category.description || 'No description available'}
                 </p>
               </CardContent>

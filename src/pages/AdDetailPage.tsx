@@ -88,9 +88,9 @@ export const AdDetailPage = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">Ad not found</h2>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4">The ad you're looking for doesn't exist or has been removed.</p>
-          <Button onClick={() => navigate('/')} variant="outline" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Ad not found</h2>
+          <p className="text-sm sm:text-base text-slate-400 mb-4">The ad you're looking for doesn't exist or has been removed.</p>
+          <Button onClick={() => navigate('/')} variant="outline" className="border-slate-600/50 hover:bg-slate-700/50">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Button>
@@ -105,19 +105,18 @@ export const AdDetailPage = () => {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Back Button */}
-      <Button
-        variant="ghost"
+      <button
         onClick={() => navigate(-1)}
-        className="mb-4 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+        className="mb-4 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 text-slate-400 hover:text-blue-400 hover:bg-blue-400/10"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back
-      </Button>
+      </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Image Gallery */}
         <div className="space-y-4">
-          <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
+          <div className="aspect-square overflow-hidden rounded-lg bg-slate-700/30">
             <img
               src={ad.images[currentImageIndex] || '/placeholder-image.svg'}
               alt={ad.title}
@@ -134,7 +133,7 @@ export const AdDetailPage = () => {
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 ${currentImageIndex === index ? 'border-blue-500 dark:border-blue-400' : 'border-gray-200 dark:border-gray-600'
+                  className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 ${currentImageIndex === index ? 'border-blue-400 shadow-lg shadow-blue-400/20' : 'border-slate-600/50 hover:border-blue-400/50'
                     }`}
                 >
                   <img
@@ -153,42 +152,35 @@ export const AdDetailPage = () => {
           {/* Header */}
           <div>
             <div className="flex items-start justify-between mb-2">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{ad.title}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">{ad.title}</h1>
               <div className="flex items-center gap-2">
-                {/* <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsLiked(!isLiked)}
-                  className={isLiked ? 'text-red-500' : 'text-gray-500'}
+                <button
+                  onClick={handleShare}
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 h-8 rounded-md px-3 text-xs text-slate-400 hover:text-blue-400 hover:bg-blue-400/10"
                 >
-                  <Heart className={`h-5 w-5 ${isLiked ? 'fill-current' : ''}`} />
-                </Button> */}
-                <Button variant="ghost" size="sm" onClick={handleShare} className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
                   <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <Button variant="ghost" size="sm" className="text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+                </button>
+                <button
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 h-8 rounded-md px-3 text-xs text-slate-400 hover:text-red-400 hover:bg-red-400/10"
+                >
                   <Flag className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
+                </button>
               </div>
             </div>
 
             <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-              <span className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">₹{ad.price}</span>
-              <Badge variant="outline" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300">{ad.condition}</Badge>
+              <span className="text-2xl sm:text-3xl font-bold text-blue-400">₹{ad.price}</span>
+              <Badge variant="outline" className="border-slate-500/50 text-slate-300 bg-slate-700/30">{ad.condition}</Badge>
               {ad.status === 'sold' && (
-                <Badge variant="secondary" className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">Sold</Badge>
+                <Badge variant="secondary" className="bg-slate-700/50 text-slate-300">Sold</Badge>
               )}
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-400">
               <div className="flex items-center">
                 <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 <span>Posted {timeAgo}</span>
               </div>
-              {/* <div className="flex items-center">
-                <Eye className="h-4 w-4 mr-1" />
-                <span>{ad.views} views</span>
-              </div> */}
               <div className="flex items-center">
                 <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                 <span>{ad.location}</span>
@@ -200,33 +192,29 @@ export const AdDetailPage = () => {
           {ad.category && (
             <div className="flex items-center gap-2">
               <span className="text-xl sm:text-2xl">{ad.category.icon}</span>
-              <span className="font-medium text-gray-700 dark:text-gray-300">{ad.category.name}</span>
+              <span className="font-medium text-slate-300">{ad.category.name}</span>
             </div>
           )}
 
           {/* Description */}
           <div>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Description</h3>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 whitespace-pre-wrap">{ad.description}</p>
+            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">Description</h3>
+            <p className="text-sm sm:text-base text-slate-400 whitespace-pre-wrap">{ad.description}</p>
           </div>
 
           {/* Seller Info */}
-          <Card className="dark:bg-gray-800 dark:border-gray-700">
+          <Card className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-slate-600/50 backdrop-blur-sm">
             <CardContent className="p-4">
               <div className="flex items-center gap-3 mb-4">
                 <Avatar>
                   <AvatarImage src={ad.seller.avatar || `https://api.dicebear.com/6.x/initials/svg?seed=${ad.seller.name}`} />
-                  <AvatarFallback className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white">
+                  <AvatarFallback className="bg-slate-700/30 text-foreground">
                     {ad.seller.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white">{ad.seller.name}</h4>
-                  {/* <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm text-gray-600">4.8 (24 reviews)</span>
-                  </div> */}
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{ad.college}</p>
+                  <h4 className="font-semibold text-foreground">{ad.seller.name}</h4>
+                  <p className="text-sm text-slate-400">{ad.college}</p>
                 </div>
               </div>
 
@@ -234,7 +222,7 @@ export const AdDetailPage = () => {
               <div className="space-y-2">
                 {!isOwner && ad.status === 'active' && (
                   <Button
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-200"
                     onClick={() => setShowContactModal(true)}
                   >
                     <Mail className="h-4 w-4 mr-2" />
@@ -245,30 +233,27 @@ export const AdDetailPage = () => {
                 {isOwner && (
                   <div className="space-y-2">
                     {ad.status === 'active' && (
-                      <Button
-                        variant="outline"
-                        className="w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      <button
+                        className="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 border border-slate-600/50 bg-transparent text-slate-300 hover:text-green-400 hover:border-green-400/50 hover:bg-green-400/10"
                         onClick={handleMarkAsSold}
                       >
                         Mark as Sold
-                      </Button>
+                      </button>
                     )}
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        className="flex-1 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      <button
+                        className="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 border border-slate-600/50 bg-transparent text-slate-300 hover:text-blue-400 hover:border-blue-400/50 hover:bg-blue-400/10"
                         onClick={() => navigate(`/edit/${ad._id}`)}
                       >
                         <Edit className="h-4 w-4 mr-2" />
                         Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="flex-1 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 border-red-300 dark:border-red-600"
+                      </button>
+                      <button
+                        className="flex-1 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-300 disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 border border-red-600/50 bg-transparent text-red-400 hover:text-red-300 hover:bg-red-400/10 hover:border-red-400/50"
                         onClick={handleDeleteAd}
                       >
                         Delete
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -277,10 +262,10 @@ export const AdDetailPage = () => {
           </Card>
 
           {/* Safety Tips */}
-          <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+          <Card className="bg-gradient-to-br from-yellow-900/20 to-yellow-800/20 border-yellow-600/50 backdrop-blur-sm">
             <CardContent className="p-4">
-              <h4 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Safety Tips</h4>
-              <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+              <h4 className="font-semibold text-yellow-300 mb-2">Safety Tips</h4>
+              <ul className="text-sm text-yellow-200 space-y-1">
                 <li>• Meet in a public place on campus</li>
                 <li>• Inspect the item before purchasing</li>
                 <li>• Use secure payment methods</li>

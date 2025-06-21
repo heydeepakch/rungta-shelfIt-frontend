@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const API_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000/api';
-      const { data } = await axios.post(`${API_URL}/api/users/login`, { email, password });
+      const { data } = await axios.post(`${API_URL}/users/login`, { email, password });
       if (data) {
         setUser(data);
         localStorage.setItem('marketplace_user', JSON.stringify(data));
@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (userData: RegisterData): Promise<boolean> => {
     try {
       const API_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000/api';
-      const { data } = await axios.post(`${API_URL}/api/users/register`, userData);
+      const { data } = await axios.post(`${API_URL}/users/register`, userData);
       if (data) {
         setUser(data);
         localStorage.setItem('marketplace_user', JSON.stringify(data));

@@ -66,7 +66,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchAds = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${API_URL}/api/ads`);
+      const { data } = await axios.get(`${API_URL}/ads`);
       setAds(data);
     } catch (error) {
       console.error('Error loading ads:', error);

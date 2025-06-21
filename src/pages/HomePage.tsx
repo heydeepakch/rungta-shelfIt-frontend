@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { AdCard } from '../components/ads/AdCard';
 import { CategoryGrid } from '../components/categories/CategoryGrid';
-import { Search, TrendingUp, Users, Shield, Zap } from 'lucide-react';
+import { Search, TrendingUp, Users, Shield, Zap, Mail } from 'lucide-react';
 
 export const HomePage = () => {
   const { ads, categories, loading } = useData();
@@ -124,7 +124,7 @@ export const HomePage = () => {
         <div className="text-center mb-6 sm:mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Shop by Category</h2>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Find exactly what you need for college life. From textbooks to furniture,
+            Find exactly what you need for college life. From textbooks to Supplies,
             we've got everything organized just for you.
           </p>
         </div>
@@ -182,7 +182,7 @@ export const HomePage = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Why Choose Rungta-ShelfIt?</h2>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Built specifically for the college community</p>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Built specifically for the Rungta College Community</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="text-center">
@@ -190,8 +190,8 @@ export const HomePage = () => {
                 <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Safe & Secure</h3>
-              <p className="text-sm sm:text-sm text-gray-600 dark:text-gray-300">
-                Verified student community ensures safe transactions and reliable sellers
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
+                No phone numbers shared, contact sellers safely via student email.
               </p>
             </div>
             <div className="text-center">
@@ -199,7 +199,7 @@ export const HomePage = () => {
                 <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Fast & Easy</h3>
-              <p className="text-sm sm:text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                 Post an ad in minutes, find what you need instantly with smart search
               </p>
             </div>
@@ -208,7 +208,7 @@ export const HomePage = () => {
                 <Users className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2">Community Focused</h3>
-              <p className="text-sm sm:text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                 Connect with students at your college, support your campus community
               </p>
             </div>
@@ -231,6 +231,23 @@ export const HomePage = () => {
               <Link to="/search">Browse Items</Link>
             </Button>
           </div>
+        </div>
+      </section>
+
+      {/* Contact Developers Section */}
+      <section className="text-center py-6 sm:py-8 border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-md mx-auto">
+          <div className="flex items-center justify-center mb-2">
+            <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400 mr-2" />
+            <span className="text-xs text-gray-500 dark:text-gray-400">Need Help? Found a bug or have suggestions?</span>
+          </div>
+
+          <a
+            href="mailto:hellodeepakch@gmail.com?subject=Feedback%20or%20Bug%20Report&body=Hello%20Developers,%0D%0A%0D%0AI%20would%20like%20to%20report%20an%20issue%20or%20suggest%20an%20improvement:%0D%0A%0D%0A[Please describe your issue or suggestion here]%0D%0A%0D%0AThank you!"
+            className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
+          >
+            Contact Us
+          </a>
         </div>
       </section>
     </div>

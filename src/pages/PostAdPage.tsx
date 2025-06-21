@@ -281,10 +281,8 @@ export const PostAdPage = () => {
                     <SelectValue placeholder="Select location" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Campus North">Campus North</SelectItem>
-                    <SelectItem value="Campus South">Campus South</SelectItem>
-                    <SelectItem value="Campus East">Campus East</SelectItem>
-                    <SelectItem value="Campus West">Campus West</SelectItem>
+                    <SelectItem value="Hostel">Hostel</SelectItem>
+                    <SelectItem value="On-Campus">On-Campus</SelectItem>
                     <SelectItem value="Off-Campus">Off-Campus</SelectItem>
                   </SelectContent>
                 </Select>

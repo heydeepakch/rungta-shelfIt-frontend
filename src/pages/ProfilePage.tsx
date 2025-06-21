@@ -19,7 +19,6 @@ import {
   Package,
   Eye,
   Plus,
-  IndianRupee,
   Heart,
   ShoppingCart
 } from 'lucide-react';
@@ -71,7 +70,6 @@ export const ProfilePage = () => {
 
   const joinDate = formatJoinDate();
   const totalViews = userAds.reduce((sum, ad) => sum + ad.views, 0);
-  const totalRevenue = userAds.filter(ad => ad.status === 'sold').reduce((sum, ad) => sum + ad.price, 0);
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -136,7 +134,7 @@ export const ProfilePage = () => {
       </Card>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <Card className="bg-gradient-to-br from-blue-900/20 via-blue-800/30 to-blue-700/20 border-blue-600/30 backdrop-blur-sm hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group">
           <CardContent className="p-4 sm:p-6 text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -172,19 +170,6 @@ export const ProfilePage = () => {
               </div>
               <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">{totalViews}</h3>
               <p className="text-sm sm:text-base text-slate-300 font-medium">Total Views</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-yellow-900/20 via-yellow-800/30 to-yellow-700/20 border-yellow-600/30 backdrop-blur-sm hover:shadow-lg hover:shadow-yellow-500/10 transition-all duration-300 group">
-          <CardContent className="p-4 sm:p-6 text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="relative z-10">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-yellow-500/25">
-                <IndianRupee className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-1">₹{totalRevenue}</h3>
-              <p className="text-sm sm:text-base text-slate-300 font-medium">Revenue</p>
             </div>
           </CardContent>
         </Card>

@@ -98,7 +98,7 @@ export const RegisterPage = () => {
                   <Input
                     id="name"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder="Enter your full name"
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
@@ -164,7 +164,7 @@ export const RegisterPage = () => {
                   <Input
                     id="college"
                     type="text"
-                    placeholder="State University"
+                    placeholder="Enter your college/university"
                     value={formData.college}
                     onChange={(e) => handleChange('college', e.target.value)}
                     className="pl-10 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
@@ -197,18 +197,18 @@ export const RegisterPage = () => {
                       <SelectValue placeholder="Select year" className="dark:text-gray-400" />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
-                      <SelectItem value="Freshman" className="dark:text-white dark:hover:bg-gray-600">Freshman</SelectItem>
-                      <SelectItem value="Sophomore" className="dark:text-white dark:hover:bg-gray-600">Sophomore</SelectItem>
-                      <SelectItem value="Junior" className="dark:text-white dark:hover:bg-gray-600">Junior</SelectItem>
-                      <SelectItem value="Senior" className="dark:text-white dark:hover:bg-gray-600">Senior</SelectItem>
-                      <SelectItem value="Graduate" className="dark:text-white dark:hover:bg-gray-600">Graduate</SelectItem>
+                      <SelectItem value="First Year" className="dark:text-white dark:hover:bg-gray-600">First Year</SelectItem>
+                      <SelectItem value="Second Year" className="dark:text-white dark:hover:bg-gray-600">Second Year</SelectItem>
+                      <SelectItem value="Third Year" className="dark:text-white dark:hover:bg-gray-600">Third Year</SelectItem>
+                      <SelectItem value="Fourth Year" className="dark:text-white dark:hover:bg-gray-600">Fourth Year</SelectItem>
+                      <SelectItem value="Fifth Year" className="dark:text-white dark:hover:bg-gray-600">Fifth Year</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location" className="dark:text-white">Campus Location</Label>
+                <Label htmlFor="location" className="dark:text-white">Location</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Select value={formData.location} onValueChange={(value) => handleChange('location', value)}>
@@ -216,10 +216,8 @@ export const RegisterPage = () => {
                       <SelectValue placeholder="Select location" className="dark:text-gray-400" />
                     </SelectTrigger>
                     <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
-                      <SelectItem value="Campus North" className="dark:text-white dark:hover:bg-gray-600">Campus North</SelectItem>
-                      <SelectItem value="Campus South" className="dark:text-white dark:hover:bg-gray-600">Campus South</SelectItem>
-                      <SelectItem value="Campus East" className="dark:text-white dark:hover:bg-gray-600">Campus East</SelectItem>
-                      <SelectItem value="Campus West" className="dark:text-white dark:hover:bg-gray-600">Campus West</SelectItem>
+                      <SelectItem value="Hostel" className="dark:text-white dark:hover:bg-gray-600">Hostel</SelectItem>
+                      <SelectItem value="On-Campus" className="dark:text-white dark:hover:bg-gray-600">On-Campus</SelectItem>
                       <SelectItem value="Off-Campus" className="dark:text-white dark:hover:bg-gray-600">Off-Campus</SelectItem>
                     </SelectContent>
                   </Select>

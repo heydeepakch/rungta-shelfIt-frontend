@@ -78,6 +78,25 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
+
+  /* Custom gradient background */
+  .bg-custom-gradient {
+    background: linear-gradient(135deg,
+        rgba(59, 130, 246, 0.1) 0%,
+        rgba(147, 197, 253, 0.05) 25%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(147, 197, 253, 0.05) 75%,
+        rgba(59, 130, 246, 0.1) 100%);
+  }
+
+  .dark .bg-custom-gradient {
+    background: linear-gradient(135deg,
+        rgba(8, 28, 83, 0.2) 0%,
+
+        rgba(3, 5, 12, 0.9) 50%,
+
+        rgba(9, 29, 85, 0.2) 100%);
+  }
 }
 
 @layer components {

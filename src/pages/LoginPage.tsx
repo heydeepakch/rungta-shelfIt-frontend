@@ -26,7 +26,7 @@ export const LoginPage = () => {
         toast.success('Welcome back!');
         navigate('/');
       } else {
-        toast.error('Invalid email or password. Try sarah.chen@university.edu with any password.');
+        toast.error('Invalid email or password.');
       }
     } catch (error) {
       toast.error('Login failed. Please try again.');

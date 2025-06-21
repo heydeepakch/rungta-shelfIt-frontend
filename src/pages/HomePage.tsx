@@ -100,7 +100,7 @@ export const HomePage = () => {
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg shadow-green-500/25">
                 <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-foreground">500+</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground">50+</h3>
               <p className="text-sm sm:text-base text-slate-300 font-medium">Students Joined</p>
             </div>
           </CardContent>

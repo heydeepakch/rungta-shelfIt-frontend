@@ -61,12 +61,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000/api';
 
   const fetchAds = useCallback(async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${API_URL}/ads`);
+      const { data } = await axios.get(`${API_URL}/api/ads`);
       setAds(data);
     } catch (error) {
       console.error('Error loading ads:', error);

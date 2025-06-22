@@ -47,7 +47,7 @@ export const PostAdPage = () => {
     console.log('Testing file input functionality...');
     const testInput = document.createElement('input');
     testInput.type = 'file';
-    testInput.accept = 'image/*';
+    testInput.accept = 'image/jpeg,image/jpg,image/png,image/gif,image/webp';
     testInput.style.display = 'none';
 
     testInput.onchange = (e) => {
@@ -81,75 +81,78 @@ export const PostAdPage = () => {
       userAgent: navigator.userAgent
     });
 
-    if (e.target.files && e.target.files.length > 0) {
-      const files = Array.from(e.target.files);
-      const maxFileSize = 5 * 1024 * 1024; // 5MB
-      const maxFiles = 5;
+    // Add a small delay to ensure the file input has processed the selection
+    setTimeout(() => {
+      if (e.target.files && e.target.files.length > 0) {
+        const files = Array.from(e.target.files);
+        const maxFileSize = 5 * 1024 * 1024; // 5MB
+        const maxFiles = 5;
 
-      console.log('Files selected:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
+        console.log('Files selected:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
 
-      // Check file count
-      if (formData.images.length + files.length > maxFiles) {
-        toast.error(`Maximum ${maxFiles} images allowed. You can upload ${maxFiles - formData.images.length} more.`);
-        return;
-      }
-
-      // Validate each file
-      const validFiles: File[] = [];
-      const validPreviews: string[] = [];
-
-      files.forEach((file, fileIndex) => {
-        console.log(`Processing file ${fileIndex}:`, { name: file.name, size: file.size, type: file.type });
-
-        // Check file size
-        if (file.size > maxFileSize) {
-          toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
+        // Check file count
+        if (formData.images.length + files.length > maxFiles) {
+          toast.error(`Maximum ${maxFiles} images allowed. You can upload ${maxFiles - formData.images.length} more.`);
           return;
         }
 
-        // Check file type
-        if (!file.type.startsWith('image/')) {
-          toast.error(`${file.name} is not an image file. Please upload JPG, PNG, GIF, or WebP files.`);
-          return;
-        }
+        // Validate each file
+        const validFiles: File[] = [];
+        const validPreviews: string[] = [];
 
-        // Check file size in MB for user-friendly message
-        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-        if (file.size > maxFileSize) {
-          toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 5MB.`);
-          return;
-        }
+        files.forEach((file, fileIndex) => {
+          console.log(`Processing file ${fileIndex}:`, { name: file.name, size: file.size, type: file.type });
 
-        validFiles.push(file);
-        const objectUrl = URL.createObjectURL(file);
-        validPreviews.push(objectUrl);
-        console.log(`File ${file.name} validated successfully, created object URL:`, objectUrl);
-      });
+          // Check file size
+          if (file.size > maxFileSize) {
+            toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
+            return;
+          }
 
-      // Update state with valid files only
-      if (validFiles.length > 0) {
-        setFormData(prev => ({
-          ...prev,
-          images: [...prev.images, ...validFiles].slice(0, maxFiles)
-        }));
+          // Check file type
+          if (!file.type.startsWith('image/')) {
+            toast.error(`${file.name} is not an image file. Please upload JPG, PNG, GIF, or WebP files.`);
+            return;
+          }
 
-        setImagePreviews(prev => [...prev, ...validPreviews].slice(0, maxFiles));
+          // Check file size in MB for user-friendly message
+          const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+          if (file.size > maxFileSize) {
+            toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 5MB.`);
+            return;
+          }
 
-        if (validFiles.length < files.length) {
-          toast.warning(`${validFiles.length} of ${files.length} files were uploaded. Some files were skipped due to size or type restrictions.`);
+          validFiles.push(file);
+          const objectUrl = URL.createObjectURL(file);
+          validPreviews.push(objectUrl);
+          console.log(`File ${file.name} validated successfully, created object URL:`, objectUrl);
+        });
+
+        // Update state with valid files only
+        if (validFiles.length > 0) {
+          setFormData(prev => ({
+            ...prev,
+            images: [...prev.images, ...validFiles].slice(0, maxFiles)
+          }));
+
+          setImagePreviews(prev => [...prev, ...validPreviews].slice(0, maxFiles));
+
+          if (validFiles.length < files.length) {
+            toast.warning(`${validFiles.length} of ${files.length} files were uploaded. Some files were skipped due to size or type restrictions.`);
+          } else {
+            toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} uploaded successfully!`);
+          }
         } else {
-          toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} uploaded successfully!`);
+          console.log('No valid files found');
+          toast.error('No valid images were selected. Please try again.');
         }
       } else {
-        console.log('No valid files found');
-        toast.error('No valid images were selected. Please try again.');
+        console.log('No files selected or files array is empty');
+        if (isMobile) {
+          toast.error('No image selected. Please try tapping the image area again.');
+        }
       }
-    } else {
-      console.log('No files selected or files array is empty');
-      if (isMobile) {
-        toast.error('No image selected. Please try tapping the image area again.');
-      }
-    }
+    }, 100);
 
     // Reset the input value to allow selecting the same file again
     e.target.value = '';
@@ -166,12 +169,17 @@ export const PostAdPage = () => {
   const handleMobileImageUpload = (index: number) => {
     console.log('Mobile image upload triggered for index:', index);
 
+    // Remove any existing temporary inputs
+    const existingInputs = document.querySelectorAll('input[data-mobile-upload]');
+    existingInputs.forEach(input => document.body.removeChild(input));
+
     // Create a temporary file input for mobile
     const tempInput = document.createElement('input');
     tempInput.type = 'file';
-    tempInput.accept = 'image/*';
+    tempInput.accept = 'image/jpeg,image/jpg,image/png,image/gif,image/webp';
     tempInput.multiple = false;
     tempInput.style.display = 'none';
+    tempInput.setAttribute('data-mobile-upload', 'true');
 
     // Add mobile-specific attributes
     tempInput.setAttribute('data-index', index.toString());
@@ -180,25 +188,32 @@ export const PostAdPage = () => {
       const target = e.target as HTMLInputElement;
       console.log('Mobile file input change event:', { files: target.files, index });
       if (target.files && target.files.length > 0) {
+        console.log('File selected in mobile fallback:', target.files[0]);
         handleImageUpload({ target } as React.ChangeEvent<HTMLInputElement>, index);
       } else {
         console.log('No files selected in mobile fallback');
         toast.error('No image selected. Please try again.');
       }
       // Clean up
-      document.body.removeChild(tempInput);
+      if (document.body.contains(tempInput)) {
+        document.body.removeChild(tempInput);
+      }
     };
 
     tempInput.oncancel = () => {
       console.log('File selection cancelled in mobile fallback');
-      document.body.removeChild(tempInput);
+      if (document.body.contains(tempInput)) {
+        document.body.removeChild(tempInput);
+      }
     };
 
     // Add error handling
     tempInput.onerror = (e) => {
       console.error('Error in mobile file input:', e);
       toast.error('Error accessing camera/gallery. Please try again.');
-      document.body.removeChild(tempInput);
+      if (document.body.contains(tempInput)) {
+        document.body.removeChild(tempInput);
+      }
     };
 
     document.body.appendChild(tempInput);
@@ -207,10 +222,13 @@ export const PostAdPage = () => {
     setTimeout(() => {
       try {
         tempInput.click();
+        tempInput.focus();
       } catch (error) {
         console.error('Error clicking mobile file input:', error);
         toast.error('Unable to open camera/gallery. Please try again.');
-        document.body.removeChild(tempInput);
+        if (document.body.contains(tempInput)) {
+          document.body.removeChild(tempInput);
+        }
       }
     }, 100);
   };
@@ -441,23 +459,34 @@ export const PostAdPage = () => {
                         </button>
                       </div>
                     ) : (
-                      <label
-                        className="w-full h-full border-2 border-dashed border-slate-500/50 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-400/50 transition-colors bg-slate-700/30 active:bg-slate-600/50 touch-manipulation"
-                        htmlFor={`image-upload-${index}`}
-                        onClick={(e) => {
-                          // For mobile devices, use the fallback mechanism
-                          if (isMobile) {
-                            e.preventDefault();
-                            handleMobileImageUpload(index);
-                          }
-                        }}
-                      >
-                        <Upload className="h-6 w-6 text-slate-400 mb-2" />
-                        <span className="text-xs text-slate-400 text-center px-2">Add Image</span>
+                      <div className="w-full h-full relative">
+                        <label
+                          className="w-full h-full border-2 border-dashed border-slate-500/50 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-400/50 transition-colors bg-slate-700/30 active:bg-slate-600/50 touch-manipulation"
+                          htmlFor={`image-upload-${index}`}
+                          onClick={(e) => {
+                            // For mobile devices, use the fallback mechanism
+                            if (isMobile) {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleMobileImageUpload(index);
+                            }
+                          }}
+                          onTouchEnd={(e) => {
+                            // Additional touch handling for mobile
+                            if (isMobile) {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleMobileImageUpload(index);
+                            }
+                          }}
+                        >
+                          <Upload className="h-6 w-6 text-slate-400 mb-2" />
+                          <span className="text-xs text-slate-400 text-center px-2">Add Image</span>
+                        </label>
                         <input
                           id={`image-upload-${index}`}
                           type="file"
-                          accept="image/*"
+                          accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                           multiple={false}
                           onChange={(e) => handleImageUpload(e, index)}
                           ref={(el) => (fileInputRefs.current[index] = el)}
@@ -466,8 +495,21 @@ export const PostAdPage = () => {
                             // Prevent double-tap zoom on mobile
                             e.preventDefault();
                           }}
+                          onClick={(e) => {
+                            // Ensure the input is properly focused for mobile
+                            e.currentTarget.focus();
+                          }}
                         />
-                      </label>
+                        {/* Direct button for mobile */}
+                        {isMobile && (
+                          <button
+                            type="button"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            onClick={() => handleMobileImageUpload(index)}
+                            aria-label="Upload image"
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}

@@ -174,7 +174,6 @@ export const PostAdPage = () => {
     tempInput.style.display = 'none';
 
     // Add mobile-specific attributes
-    tempInput.setAttribute('capture', 'environment');
     tempInput.setAttribute('data-index', index.toString());
 
     tempInput.onchange = (e) => {
@@ -459,7 +458,6 @@ export const PostAdPage = () => {
                           id={`image-upload-${index}`}
                           type="file"
                           accept="image/*"
-                          capture="environment"
                           multiple={false}
                           onChange={(e) => handleImageUpload(e, index)}
                           ref={(el) => (fileInputRefs.current[index] = el)}
@@ -479,7 +477,7 @@ export const PostAdPage = () => {
               <div className="text-xs text-muted-foreground bg-slate-700/30 p-3 rounded-lg">
                 <p className="font-medium mb-1">📱 Mobile Tips:</p>
                 <ul className="space-y-1 text-xs">
-                  <li>• Tap the image area to select from your gallery</li>
+                  <li>• Tap the image area to select from your photo gallery</li>
                   <li>• Make sure your images are clear and well-lit</li>
                   <li>• Each image should be under 5MB</li>
                   <li>• Supported formats: JPG, PNG, GIF, WebP</li>

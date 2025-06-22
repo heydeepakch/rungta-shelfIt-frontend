@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
@@ -23,20 +23,70 @@ export const PostAdPage = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const { user } = useAuth();
   const { addAd, categories } = useData();
   const navigate = useNavigate();
 
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+      setIsMobile(isMobileDevice);
+      console.log('Mobile detection:', { userAgent, isMobileDevice });
+    };
+
+    checkMobile();
+  }, []);
+
+  // Test file input functionality on mobile
+  const testFileInput = () => {
+    console.log('Testing file input functionality...');
+    const testInput = document.createElement('input');
+    testInput.type = 'file';
+    testInput.accept = 'image/*';
+    testInput.style.display = 'none';
+
+    testInput.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      console.log('Test file input result:', {
+        files: target.files,
+        fileCount: target.files?.length,
+        firstFile: target.files?.[0]
+      });
+      if (target.files && target.files.length > 0) {
+        toast.success('File input test successful!');
+      } else {
+        toast.error('File input test failed - no files selected');
+      }
+      document.body.removeChild(testInput);
+    };
+
+    document.body.appendChild(testInput);
+    testInput.click();
+  };
+
   const handleChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
+    console.log('handleImageUpload triggered', {
+      files: e.target.files,
+      index,
+      isMobile,
+      userAgent: navigator.userAgent
+    });
+
+    if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
       const maxFileSize = 5 * 1024 * 1024; // 5MB
       const maxFiles = 5;
+
+      console.log('Files selected:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
 
       // Check file count
       if (formData.images.length + files.length > maxFiles) {
@@ -48,7 +98,9 @@ export const PostAdPage = () => {
       const validFiles: File[] = [];
       const validPreviews: string[] = [];
 
-      files.forEach((file, index) => {
+      files.forEach((file, fileIndex) => {
+        console.log(`Processing file ${fileIndex}:`, { name: file.name, size: file.size, type: file.type });
+
         // Check file size
         if (file.size > maxFileSize) {
           toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
@@ -69,7 +121,9 @@ export const PostAdPage = () => {
         }
 
         validFiles.push(file);
-        validPreviews.push(URL.createObjectURL(file));
+        const objectUrl = URL.createObjectURL(file);
+        validPreviews.push(objectUrl);
+        console.log(`File ${file.name} validated successfully, created object URL:`, objectUrl);
       });
 
       // Update state with valid files only
@@ -86,8 +140,80 @@ export const PostAdPage = () => {
         } else {
           toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} uploaded successfully!`);
         }
+      } else {
+        console.log('No valid files found');
+        toast.error('No valid images were selected. Please try again.');
+      }
+    } else {
+      console.log('No files selected or files array is empty');
+      if (isMobile) {
+        toast.error('No image selected. Please try tapping the image area again.');
       }
     }
+
+    // Reset the input value to allow selecting the same file again
+    e.target.value = '';
+  };
+
+  const handleImageClick = (index: number) => {
+    console.log('Image click triggered for index:', index);
+    if (fileInputRefs.current[index]) {
+      fileInputRefs.current[index]?.click();
+    }
+  };
+
+  // Fallback for mobile devices that might have issues with file input
+  const handleMobileImageUpload = (index: number) => {
+    console.log('Mobile image upload triggered for index:', index);
+
+    // Create a temporary file input for mobile
+    const tempInput = document.createElement('input');
+    tempInput.type = 'file';
+    tempInput.accept = 'image/*';
+    tempInput.multiple = false;
+    tempInput.style.display = 'none';
+
+    // Add mobile-specific attributes
+    tempInput.setAttribute('capture', 'environment');
+    tempInput.setAttribute('data-index', index.toString());
+
+    tempInput.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      console.log('Mobile file input change event:', { files: target.files, index });
+      if (target.files && target.files.length > 0) {
+        handleImageUpload({ target } as React.ChangeEvent<HTMLInputElement>, index);
+      } else {
+        console.log('No files selected in mobile fallback');
+        toast.error('No image selected. Please try again.');
+      }
+      // Clean up
+      document.body.removeChild(tempInput);
+    };
+
+    tempInput.oncancel = () => {
+      console.log('File selection cancelled in mobile fallback');
+      document.body.removeChild(tempInput);
+    };
+
+    // Add error handling
+    tempInput.onerror = (e) => {
+      console.error('Error in mobile file input:', e);
+      toast.error('Error accessing camera/gallery. Please try again.');
+      document.body.removeChild(tempInput);
+    };
+
+    document.body.appendChild(tempInput);
+
+    // Use setTimeout to ensure the input is properly attached
+    setTimeout(() => {
+      try {
+        tempInput.click();
+      } catch (error) {
+        console.error('Error clicking mobile file input:', error);
+        toast.error('Unable to open camera/gallery. Please try again.');
+        document.body.removeChild(tempInput);
+      }
+    }, 100);
   };
 
   const removeImage = (index: number) => {
@@ -310,26 +436,76 @@ export const PostAdPage = () => {
                         <button
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600 transition-colors"
                         >
                           ×
                         </button>
                       </div>
                     ) : (
-                      <label className="w-full h-full border-2 border-dashed border-slate-500/50 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-400/50 transition-colors bg-slate-700/30">
+                      <label
+                        className="w-full h-full border-2 border-dashed border-slate-500/50 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-400/50 transition-colors bg-slate-700/30 active:bg-slate-600/50 touch-manipulation"
+                        htmlFor={`image-upload-${index}`}
+                        onClick={(e) => {
+                          // For mobile devices, use the fallback mechanism
+                          if (isMobile) {
+                            e.preventDefault();
+                            handleMobileImageUpload(index);
+                          }
+                        }}
+                      >
                         <Upload className="h-6 w-6 text-slate-400 mb-2" />
-                        <span className="text-xs text-slate-400 text-center">Add Image</span>
+                        <span className="text-xs text-slate-400 text-center px-2">Add Image</span>
                         <input
+                          id={`image-upload-${index}`}
                           type="file"
                           accept="image/*"
-                          onChange={(e) => handleImageUpload(e)}
+                          capture="environment"
+                          multiple={false}
+                          onChange={(e) => handleImageUpload(e, index)}
+                          ref={(el) => (fileInputRefs.current[index] = el)}
                           className="hidden"
+                          onTouchStart={(e) => {
+                            // Prevent double-tap zoom on mobile
+                            e.preventDefault();
+                          }}
                         />
                       </label>
                     )}
                   </div>
                 ))}
               </div>
+
+              {/* Mobile-specific instructions */}
+              <div className="text-xs text-muted-foreground bg-slate-700/30 p-3 rounded-lg">
+                <p className="font-medium mb-1">📱 Mobile Tips:</p>
+                <ul className="space-y-1 text-xs">
+                  <li>• Tap the image area to select from your gallery</li>
+                  <li>• Make sure your images are clear and well-lit</li>
+                  <li>• Each image should be under 5MB</li>
+                  <li>• Supported formats: JPG, PNG, GIF, WebP</li>
+                </ul>
+              </div>
+
+              {/* Debug panel for mobile troubleshooting */}
+              {isMobile && (
+                <div className="text-xs bg-yellow-900/20 border border-yellow-600/30 p-3 rounded-lg">
+                  <p className="font-medium mb-1 text-yellow-400">🔧 Debug Info (Mobile):</p>
+                  <div className="space-y-1 text-xs text-yellow-300/80">
+                    <p>• Device: {navigator.userAgent.split('(')[1]?.split(')')[0] || 'Unknown'}</p>
+                    <p>• Touch Support: {('ontouchstart' in window) ? 'Yes' : 'No'}</p>
+                    <p>• File API Support: {('File' in window) ? 'Yes' : 'No'}</p>
+                    <p>• FileReader Support: {('FileReader' in window) ? 'Yes' : 'No'}</p>
+                    <p>• Images uploaded: {formData.images.length}/5</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={testFileInput}
+                    className="mt-2 px-2 py-1 bg-yellow-600/50 text-yellow-200 text-xs rounded hover:bg-yellow-600/70 transition-colors"
+                  >
+                    Test File Input
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Submit Button */}

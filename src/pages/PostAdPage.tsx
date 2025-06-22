@@ -625,42 +625,8 @@ export const PostAdPage = () => {
               </div>
 
               {/* Debug panel for mobile troubleshooting */}
-              {isMobile && (
-                <div className="text-xs bg-yellow-900/20 border border-yellow-600/30 p-3 rounded-lg">
-                  <p className="font-medium mb-1 text-yellow-400">🔧 Debug Info (Mobile):</p>
-                  <div className="space-y-1 text-xs text-yellow-300/80">
-                    <p>• Device: {navigator.userAgent.split('(')[1]?.split(')')[0] || 'Unknown'}</p>
-                    <p>• Touch Support: {('ontouchstart' in window) ? 'Yes' : 'No'}</p>
-                    <p>• File API Support: {('File' in window) ? 'Yes' : 'No'}</p>
-                    <p>• FileReader Support: {('FileReader' in window) ? 'Yes' : 'No'}</p>
-                    <p>• Images uploaded: {formData.images.length}/5</p>
-                    <p>• Image previews: {imagePreviews.length}/5</p>
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      type="button"
-                      onClick={testFileInput}
-                      className="px-2 py-1 bg-yellow-600/50 text-yellow-200 text-xs rounded hover:bg-yellow-600/70 transition-colors"
-                    >
-                      Test File Input
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        console.log('Current state:', {
-                          formData: formData.images.length,
-                          imagePreviews: imagePreviews.length,
-                          isMobile
-                        });
-                        toast.info(`Images: ${formData.images.length}, Previews: ${imagePreviews.length}`);
-                      }}
-                      className="px-2 py-1 bg-blue-600/50 text-blue-200 text-xs rounded hover:bg-blue-600/70 transition-colors"
-                    >
-                      Check State
-                    </button>
-                  </div>
-                </div>
-              )}
+
+
             </div>
 
             {/* Submit Button */}

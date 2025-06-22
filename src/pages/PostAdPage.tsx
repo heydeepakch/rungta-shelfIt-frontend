@@ -115,7 +115,7 @@ export const PostAdPage = () => {
 
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
-      const maxFileSize = 10 * 1024 * 1024; // 10MB
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
       const maxFiles = 5;
 
       console.log('Files selected:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
@@ -135,7 +135,7 @@ export const PostAdPage = () => {
 
         // Check file size
         if (file.size > maxFileSize) {
-          toast.error(`${file.name} is too large. Maximum file size is 10MB.`);
+          toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
           return;
         }
 
@@ -148,33 +148,58 @@ export const PostAdPage = () => {
         // Check file size in MB for user-friendly message
         const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
         if (file.size > maxFileSize) {
-          toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 10MB.`);
+          toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 5MB.`);
           return;
         }
 
-        validFiles.push(file);
-        const objectUrl = URL.createObjectURL(file);
-        validPreviews.push(objectUrl);
-        console.log(`File ${file.name} validated successfully, created object URL:`, objectUrl);
+        // Compress image if it's larger than 2MB
+        if (file.size > 2 * 1024 * 1024) {
+          compressImage(file).then(compressedFile => {
+            if (compressedFile) {
+              validFiles.push(compressedFile);
+              const objectUrl = URL.createObjectURL(compressedFile);
+              validPreviews.push(objectUrl);
+              console.log(`File ${file.name} compressed and validated successfully`);
+
+              // Update state with compressed file
+              setFormData(prev => ({
+                ...prev,
+                images: [...prev.images, compressedFile].slice(0, maxFiles)
+              }));
+
+              setImagePreviews(prev => [...prev, objectUrl].slice(0, maxFiles));
+            }
+          }).catch(error => {
+            console.error('Image compression failed:', error);
+            // Fallback to original file
+            validFiles.push(file);
+            const objectUrl = URL.createObjectURL(file);
+            validPreviews.push(objectUrl);
+          });
+        } else {
+          validFiles.push(file);
+          const objectUrl = URL.createObjectURL(file);
+          validPreviews.push(objectUrl);
+          console.log(`File ${file.name} validated successfully, created object URL:`, objectUrl);
+        }
       });
 
-      // Update state with valid files only
-      if (validFiles.length > 0) {
+      // Update state with valid files only (for files that don't need compression)
+      const nonCompressedFiles = validFiles.filter(file => file.size <= 2 * 1024 * 1024);
+      if (nonCompressedFiles.length > 0) {
         setFormData(prev => ({
           ...prev,
-          images: [...prev.images, ...validFiles].slice(0, maxFiles)
+          images: [...prev.images, ...nonCompressedFiles].slice(0, maxFiles)
         }));
 
-        setImagePreviews(prev => [...prev, ...validPreviews].slice(0, maxFiles));
+        const nonCompressedPreviews = validPreviews.slice(0, nonCompressedFiles.length);
+        setImagePreviews(prev => [...prev, ...nonCompressedPreviews].slice(0, maxFiles));
+      }
 
-        if (validFiles.length < files.length) {
-          toast.warning(`${validFiles.length} of ${files.length} files were uploaded. Some files were skipped due to size or type restrictions.`);
-        } else {
-          toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} uploaded successfully!`);
-        }
+      if (validFiles.length < files.length) {
+        toast.warning(`${validFiles.length} of ${files.length} files were uploaded. Some files were skipped due to size or type restrictions.`);
       } else {
-        console.log('No valid files found');
-        toast.error('No valid images were selected. Please try again.');
+        toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} uploaded successfully!`);
       }
     } else {
       console.log('No files selected or files array is empty');
@@ -185,6 +210,59 @@ export const PostAdPage = () => {
 
     // Reset the input value to allow selecting the same file again
     e.target.value = '';
+  };
+
+  // Image compression function
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+
+      img.onload = () => {
+        // Calculate new dimensions (max 1200px width/height)
+        const maxSize = 1200;
+        let { width, height } = img;
+
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now(),
+              });
+              console.log(`Compressed ${file.name}: ${(file.size / 1024 / 1024).toFixed(2)}MB -> ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB`);
+              resolve(compressedFile);
+            } else {
+              reject(new Error('Failed to compress image'));
+            }
+          },
+          'image/jpeg',
+          0.8 // 80% quality
+        );
+      };
+
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
   };
 
   const handleImageClick = (index: number) => {
@@ -234,11 +312,11 @@ export const PostAdPage = () => {
         });
 
         // Process the file directly here instead of calling handleImageUpload
-        const maxFileSize = 10 * 1024 * 1024; // 10MB
+        const maxFileSize = 5 * 1024 * 1024; // 5MB
 
         // Validate file
         if (file.size > maxFileSize) {
-          toast.error(`${file.name} is too large. Maximum file size is 10MB.`);
+          toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
           return;
         }
 
@@ -247,28 +325,67 @@ export const PostAdPage = () => {
           return;
         }
 
-        // Create object URL for preview
-        const objectUrl = URL.createObjectURL(file);
-        console.log('Created object URL for mobile upload:', objectUrl);
+        // Compress image if it's larger than 2MB
+        if (file.size > 2 * 1024 * 1024) {
+          compressImage(file).then(compressedFile => {
+            if (compressedFile) {
+              const objectUrl = URL.createObjectURL(compressedFile);
+              console.log('Created object URL for mobile upload:', objectUrl);
 
-        // Update state directly
-        setFormData(prev => {
-          const newImages = [...prev.images, file].slice(0, 5);
-          console.log('Updated formData images:', newImages.length);
-          return {
-            ...prev,
-            images: newImages
-          };
-        });
+              // Update state directly
+              setFormData(prev => {
+                const newImages = [...prev.images, compressedFile].slice(0, 5);
+                console.log('Updated formData images:', newImages.length);
+                return {
+                  ...prev,
+                  images: newImages
+                };
+              });
 
-        setImagePreviews(prev => {
-          const newPreviews = [...prev, objectUrl].slice(0, 5);
-          console.log('Updated imagePreviews:', newPreviews.length);
-          return newPreviews;
-        });
+              setImagePreviews(prev => {
+                const newPreviews = [...prev, objectUrl].slice(0, 5);
+                console.log('Updated imagePreviews:', newPreviews.length);
+                return newPreviews;
+              });
 
-        toast.success('Image uploaded successfully!');
-        console.log('Mobile image upload completed successfully');
+              toast.success('Image uploaded successfully!');
+              console.log('Mobile image upload completed successfully');
+            }
+          }).catch(error => {
+            console.error('Mobile image compression failed:', error);
+            // Fallback to original file
+            const objectUrl = URL.createObjectURL(file);
+            setFormData(prev => ({
+              ...prev,
+              images: [...prev.images, file].slice(0, 5)
+            }));
+            setImagePreviews(prev => [...prev, objectUrl].slice(0, 5));
+            toast.success('Image uploaded successfully!');
+          });
+        } else {
+          // Create object URL for preview
+          const objectUrl = URL.createObjectURL(file);
+          console.log('Created object URL for mobile upload:', objectUrl);
+
+          // Update state directly
+          setFormData(prev => {
+            const newImages = [...prev.images, file].slice(0, 5);
+            console.log('Updated formData images:', newImages.length);
+            return {
+              ...prev,
+              images: newImages
+            };
+          });
+
+          setImagePreviews(prev => {
+            const newPreviews = [...prev, objectUrl].slice(0, 5);
+            console.log('Updated imagePreviews:', newPreviews.length);
+            return newPreviews;
+          });
+
+          toast.success('Image uploaded successfully!');
+          console.log('Mobile image upload completed successfully');
+        }
       } else {
         console.log('No files selected in mobile fallback');
         toast.error('No image selected. Please try again.');
@@ -383,13 +500,19 @@ export const PostAdPage = () => {
         const errorData = error.response.data;
         switch (errorData.error) {
           case 'FILE_TOO_LARGE':
-            toast.error('One or more images are too large. Maximum file size is 10MB per image.');
+            toast.error('One or more images are too large. Maximum file size is 5MB per image.');
             break;
           case 'TOO_MANY_FILES':
             toast.error('Too many images. Maximum 5 images allowed.');
             break;
           case 'INVALID_FILE_TYPE':
             toast.error('One or more files are not valid images. Please upload JPG, PNG, GIF, or WebP files.');
+            break;
+          case 'UPLOAD_TIMEOUT':
+            toast.error('Image upload timed out. Please try with smaller images or try again.');
+            break;
+          case 'PROCESSING_ERROR':
+            toast.error('Image processing failed. Please try with different images or try again later.');
             break;
           case 'UPLOAD_ERROR':
             toast.error('Image upload failed. Please try again with smaller files.');
@@ -615,7 +738,7 @@ export const PostAdPage = () => {
               <div className="text-xs text-muted-foreground bg-slate-700/30 p-3 rounded-lg">
                 <p className="font-medium mb-1">📱 Mobile Tips:</p>
                 <ul className="space-y-1 text-xs">
-                  <li>• Make sure your images are under 10MB</li>
+                  <li>• Make sure your images are under 5MB</li>
                   <li>• Tap the image area to open your phone's file manager</li>
                   <li>• Navigate to your photo gallery or downloads folder</li>
                   <li>• Select the image you want to upload</li>

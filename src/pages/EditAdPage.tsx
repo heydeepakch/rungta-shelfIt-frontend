@@ -71,7 +71,7 @@ export const EditAdPage = () => {
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const files = Array.from(e.target.files);
-            const maxFileSize = 10 * 1024 * 1024; // 10MB
+            const maxFileSize = 5 * 1024 * 1024; // 5MB
             const maxFiles = 5;
 
             // Check file count (existing + new)
@@ -86,7 +86,7 @@ export const EditAdPage = () => {
             files.forEach((file) => {
                 // Check file size
                 if (file.size > maxFileSize) {
-                    toast.error(`${file.name} is too large. Maximum file size is 10MB.`);
+                    toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
                     return;
                 }
 
@@ -339,7 +339,7 @@ export const EditAdPage = () => {
                                         />
                                     </label>
                                     <p className="text-sm text-slate-400">
-                                        Add up to 5 photos (max 10MB each) to help your item sell faster
+                                        Add up to 5 photos (max 5MB each) to help your item sell faster
                                     </p>
                                     <p className="text-slate-400 text-sm mt-1">
                                         Supported formats: JPG, PNG, GIF, WebP

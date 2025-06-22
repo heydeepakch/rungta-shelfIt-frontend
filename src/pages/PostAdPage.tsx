@@ -211,13 +211,22 @@ export const PostAdPage = () => {
     tempInput.setAttribute('data-mobile-upload', 'true');
     tempInput.setAttribute('data-index', index.toString());
 
-    tempInput.onchange = (e) => {
+    // Add multiple event listeners to ensure we catch the change
+    const handleFileChange = (e: Event) => {
       const target = e.target as HTMLInputElement;
-      console.log('Mobile file input change event:', { files: target.files, index });
+      console.log('Mobile file input change event triggered:', {
+        files: target.files,
+        fileCount: target.files?.length,
+        index
+      });
 
       if (target.files && target.files.length > 0) {
         const file = target.files[0];
-        console.log('File selected in mobile fallback:', file);
+        console.log('File selected in mobile fallback:', {
+          name: file.name,
+          size: file.size,
+          type: file.type
+        });
 
         // Process the file directly here instead of calling handleImageUpload
         const maxFileSize = 5 * 1024 * 1024; // 5MB
@@ -238,12 +247,20 @@ export const PostAdPage = () => {
         console.log('Created object URL for mobile upload:', objectUrl);
 
         // Update state directly
-        setFormData(prev => ({
-          ...prev,
-          images: [...prev.images, file].slice(0, 5)
-        }));
+        setFormData(prev => {
+          const newImages = [...prev.images, file].slice(0, 5);
+          console.log('Updated formData images:', newImages.length);
+          return {
+            ...prev,
+            images: newImages
+          };
+        });
 
-        setImagePreviews(prev => [...prev, objectUrl].slice(0, 5));
+        setImagePreviews(prev => {
+          const newPreviews = [...prev, objectUrl].slice(0, 5);
+          console.log('Updated imagePreviews:', newPreviews.length);
+          return newPreviews;
+        });
 
         toast.success('Image uploaded successfully!');
         console.log('Mobile image upload completed successfully');
@@ -257,6 +274,10 @@ export const PostAdPage = () => {
         document.body.removeChild(tempInput);
       }
     };
+
+    // Add multiple event listeners
+    tempInput.addEventListener('change', handleFileChange);
+    tempInput.onchange = handleFileChange;
 
     tempInput.oncancel = () => {
       console.log('File selection cancelled in mobile fallback');
@@ -278,8 +299,10 @@ export const PostAdPage = () => {
 
     // Trigger file selection immediately
     try {
+      console.log('Attempting to click mobile file input...');
       tempInput.click();
       tempInput.focus();
+      console.log('Mobile file input clicked successfully');
     } catch (error) {
       console.error('Error clicking mobile file input:', error);
       toast.error('Unable to open camera/gallery. Please try again.');
@@ -545,7 +568,13 @@ export const PostAdPage = () => {
                           type="file"
                           accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                           multiple={false}
-                          onChange={(e) => handleImageUpload(e, index)}
+                          onChange={(e) => {
+                            console.log('Regular file input change event:', {
+                              files: e.target.files,
+                              isMobile
+                            });
+                            handleImageUpload(e, index);
+                          }}
                           ref={(el) => (fileInputRefs.current[index] = el)}
                           className="hidden"
                         />
@@ -558,7 +587,14 @@ export const PostAdPage = () => {
                               e.preventDefault();
                               e.stopPropagation();
                               console.log('Mobile button click detected');
-                              handleMobileImageUpload(index);
+                              // Try the regular file input first, then fallback to custom handler
+                              if (fileInputRefs.current[index]) {
+                                console.log('Using regular file input for mobile');
+                                fileInputRefs.current[index]?.click();
+                              } else {
+                                console.log('Using custom mobile handler');
+                                handleMobileImageUpload(index);
+                              }
                             }}
                             aria-label="Upload image"
                           />
@@ -590,14 +626,31 @@ export const PostAdPage = () => {
                     <p>• File API Support: {('File' in window) ? 'Yes' : 'No'}</p>
                     <p>• FileReader Support: {('FileReader' in window) ? 'Yes' : 'No'}</p>
                     <p>• Images uploaded: {formData.images.length}/5</p>
+                    <p>• Image previews: {imagePreviews.length}/5</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={testFileInput}
-                    className="mt-2 px-2 py-1 bg-yellow-600/50 text-yellow-200 text-xs rounded hover:bg-yellow-600/70 transition-colors"
-                  >
-                    Test File Input
-                  </button>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      type="button"
+                      onClick={testFileInput}
+                      className="px-2 py-1 bg-yellow-600/50 text-yellow-200 text-xs rounded hover:bg-yellow-600/70 transition-colors"
+                    >
+                      Test File Input
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        console.log('Current state:', {
+                          formData: formData.images.length,
+                          imagePreviews: imagePreviews.length,
+                          isMobile
+                        });
+                        toast.info(`Images: ${formData.images.length}, Previews: ${imagePreviews.length}`);
+                      }}
+                      className="px-2 py-1 bg-blue-600/50 text-blue-200 text-xs rounded hover:bg-blue-600/70 transition-colors"
+                    >
+                      Check State
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

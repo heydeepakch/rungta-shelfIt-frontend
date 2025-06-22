@@ -34,12 +34,27 @@ export const PostAdPage = () => {
   useEffect(() => {
     const checkMobile = () => {
       const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent) ||
+        window.innerWidth <= 768 ||
+        'ontouchstart' in window;
       setIsMobile(isMobileDevice);
-      console.log('Mobile detection:', { userAgent, isMobileDevice });
+      console.log('Mobile detection:', {
+        userAgent,
+        isMobileDevice,
+        screenWidth: window.innerWidth,
+        hasTouch: 'ontouchstart' in window
+      });
     };
 
     checkMobile();
+
+    // Re-check on resize
+    const handleResize = () => {
+      checkMobile();
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Cleanup object URLs on unmount
@@ -64,10 +79,18 @@ export const PostAdPage = () => {
       console.log('Test file input result:', {
         files: target.files,
         fileCount: target.files?.length,
-        firstFile: target.files?.[0]
+        firstFile: target.files?.[0],
+        fileType: target.files?.[0]?.type,
+        fileSize: target.files?.[0]?.size
       });
       if (target.files && target.files.length > 0) {
-        toast.success('File input test successful!');
+        const file = target.files[0];
+        const objectUrl = URL.createObjectURL(file);
+        console.log('Test object URL created:', objectUrl);
+        toast.success(`File input test successful! File: ${file.name}, Size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+
+        // Clean up test object URL
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
       } else {
         toast.error('File input test failed - no files selected');
       }
@@ -191,17 +214,44 @@ export const PostAdPage = () => {
     tempInput.onchange = (e) => {
       const target = e.target as HTMLInputElement;
       console.log('Mobile file input change event:', { files: target.files, index });
+
       if (target.files && target.files.length > 0) {
-        console.log('File selected in mobile fallback:', target.files[0]);
-        // Create a synthetic event to pass to handleImageUpload
-        const syntheticEvent = {
-          target: target
-        } as React.ChangeEvent<HTMLInputElement>;
-        handleImageUpload(syntheticEvent, index);
+        const file = target.files[0];
+        console.log('File selected in mobile fallback:', file);
+
+        // Process the file directly here instead of calling handleImageUpload
+        const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+        // Validate file
+        if (file.size > maxFileSize) {
+          toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
+          return;
+        }
+
+        if (!file.type.startsWith('image/')) {
+          toast.error(`${file.name} is not an image file. Please upload JPG, PNG, GIF, or WebP files.`);
+          return;
+        }
+
+        // Create object URL for preview
+        const objectUrl = URL.createObjectURL(file);
+        console.log('Created object URL for mobile upload:', objectUrl);
+
+        // Update state directly
+        setFormData(prev => ({
+          ...prev,
+          images: [...prev.images, file].slice(0, 5)
+        }));
+
+        setImagePreviews(prev => [...prev, objectUrl].slice(0, 5));
+
+        toast.success('Image uploaded successfully!');
+        console.log('Mobile image upload completed successfully');
       } else {
         console.log('No files selected in mobile fallback');
         toast.error('No image selected. Please try again.');
       }
+
       // Clean up
       if (document.body.contains(tempInput)) {
         document.body.removeChild(tempInput);
@@ -482,14 +532,7 @@ export const PostAdPage = () => {
                             if (isMobile) {
                               e.preventDefault();
                               e.stopPropagation();
-                              handleMobileImageUpload(index);
-                            }
-                          }}
-                          onTouchEnd={(e) => {
-                            // Additional touch handling for mobile
-                            if (isMobile) {
-                              e.preventDefault();
-                              e.stopPropagation();
+                              console.log('Mobile click detected, calling handleMobileImageUpload');
                               handleMobileImageUpload(index);
                             }
                           }}
@@ -505,21 +548,18 @@ export const PostAdPage = () => {
                           onChange={(e) => handleImageUpload(e, index)}
                           ref={(el) => (fileInputRefs.current[index] = el)}
                           className="hidden"
-                          onTouchStart={(e) => {
-                            // Prevent double-tap zoom on mobile
-                            e.preventDefault();
-                          }}
-                          onClick={(e) => {
-                            // Ensure the input is properly focused for mobile
-                            e.currentTarget.focus();
-                          }}
                         />
                         {/* Direct button for mobile */}
                         {isMobile && (
                           <button
                             type="button"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            onClick={() => handleMobileImageUpload(index)}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('Mobile button click detected');
+                              handleMobileImageUpload(index);
+                            }}
                             aria-label="Upload image"
                           />
                         )}

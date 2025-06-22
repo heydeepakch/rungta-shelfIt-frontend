@@ -228,7 +228,7 @@ export const Navbar = () => {
                 </>
               ) : (
                 <div className="space-y-2">
-                  <Button asChild variant="ghost" className="w-full justify-start">
+                  <Button asChild variant="outline" className="w-full border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
                     <Link
                       to="/login"
                       onClick={() => setIsMobileMenuOpen(false)}

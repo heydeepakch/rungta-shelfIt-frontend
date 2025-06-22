@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
+import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -10,6 +11,7 @@ import { Search, TrendingUp, Users, Shield, Zap, Mail } from 'lucide-react';
 
 export const HomePage = () => {
   const { ads, categories, loading } = useData();
+  const { user } = useAuth();
   const [featuredAds, setFeaturedAds] = useState<typeof ads>([]);
   const [recentAds, setRecentAds] = useState<typeof ads>([]);
 
@@ -50,6 +52,13 @@ export const HomePage = () => {
 
   return (
     <div className="space-y-12">
+      {/* Beta Banner */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 overflow-hidden">
+        <div className="animate-scroll-text whitespace-nowrap text-sm text-center">
+          🚀 This website is currently in beta state. We'd love your feedback! If you find any bugs, issues, or have suggestions for improvements, please let us know. 🚀
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="text-center py-8 sm:py-12 lg:py-16 px-4">
         <div className="max-w-4xl mx-auto">
@@ -61,7 +70,7 @@ export const HomePage = () => {
           </h1>
           <p className="text-sm sm:text-md lg:text-lg text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
             Buy and sell textbooks, electronics and more within your college community.
-            Safe, easy and designed for student life.
+            Think of it as an OLX, but for your college.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6">
@@ -217,22 +226,24 @@ export const HomePage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="text-center py-12 sm:py-16">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Ready to Get Started?</h2>
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-6 sm:mb-8">
-            Join thousands of students already buying and selling on Rungta-ShelfIt
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-              <Link to="/register">Create Account</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
-              <Link to="/search">Browse Items</Link>
-            </Button>
+      {!user && (
+        <section className="text-center py-12 sm:py-16">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Ready to Get Started?</h2>
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-6 sm:mb-8">
+              Join thousands of students already buying and selling on Rungta-ShelfIt
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+                <Link to="/register">Create Account</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                <Link to="/search">Browse Items</Link>
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Contact Developers Section */}
       <section className="text-center py-6 sm:py-8 border-t border-gray-200 dark:border-gray-700">

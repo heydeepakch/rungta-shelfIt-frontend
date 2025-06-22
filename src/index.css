@@ -122,6 +122,20 @@
       background-position: 100% 50%;
     }
   }
+
+  .animate-scroll-text {
+    animation: scroll-text 20s linear infinite;
+  }
+
+  @keyframes scroll-text {
+    0% {
+      transform: translateX(100%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
 }
 
 img {

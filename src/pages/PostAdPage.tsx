@@ -115,7 +115,7 @@ export const PostAdPage = () => {
 
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
-      const maxFileSize = 5 * 1024 * 1024; // 5MB
+      const maxFileSize = 10 * 1024 * 1024; // 10MB
       const maxFiles = 5;
 
       console.log('Files selected:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
@@ -135,7 +135,7 @@ export const PostAdPage = () => {
 
         // Check file size
         if (file.size > maxFileSize) {
-          toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
+          toast.error(`${file.name} is too large. Maximum file size is 10MB.`);
           return;
         }
 
@@ -148,7 +148,7 @@ export const PostAdPage = () => {
         // Check file size in MB for user-friendly message
         const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
         if (file.size > maxFileSize) {
-          toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 5MB.`);
+          toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 10MB.`);
           return;
         }
 
@@ -234,11 +234,11 @@ export const PostAdPage = () => {
         });
 
         // Process the file directly here instead of calling handleImageUpload
-        const maxFileSize = 5 * 1024 * 1024; // 5MB
+        const maxFileSize = 10 * 1024 * 1024; // 10MB
 
         // Validate file
         if (file.size > maxFileSize) {
-          toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
+          toast.error(`${file.name} is too large. Maximum file size is 10MB.`);
           return;
         }
 
@@ -383,7 +383,7 @@ export const PostAdPage = () => {
         const errorData = error.response.data;
         switch (errorData.error) {
           case 'FILE_TOO_LARGE':
-            toast.error('One or more images are too large. Maximum file size is 5MB per image.');
+            toast.error('One or more images are too large. Maximum file size is 10MB per image.');
             break;
           case 'TOO_MANY_FILES':
             toast.error('Too many images. Maximum 5 images allowed.');
@@ -615,11 +615,10 @@ export const PostAdPage = () => {
               <div className="text-xs text-muted-foreground bg-slate-700/30 p-3 rounded-lg">
                 <p className="font-medium mb-1">📱 Mobile Tips:</p>
                 <ul className="space-y-1 text-xs">
+                  <li>• Make sure your images are under 10MB</li>
                   <li>• Tap the image area to open your phone's file manager</li>
                   <li>• Navigate to your photo gallery or downloads folder</li>
                   <li>• Select the image you want to upload</li>
-                  <li>• Make sure your images are clear and well-lit</li>
-                  <li>• Each image should be under 5MB</li>
                   <li>• Supported formats: JPG, PNG, GIF, WebP</li>
                 </ul>
               </div>

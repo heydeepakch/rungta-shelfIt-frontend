@@ -180,7 +180,7 @@ export const PostAdPage = () => {
     tempInput.multiple = false;
     tempInput.style.display = 'none';
     tempInput.setAttribute('capture', 'user');
-    tempInput.setAttribute('data-mobile-upload', 'true');
+    
     
 
     // Add mobile-specific attributes

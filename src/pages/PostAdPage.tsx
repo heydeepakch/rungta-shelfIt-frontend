@@ -198,6 +198,11 @@ export const PostAdPage = () => {
   const handleMobileImageUpload = (index: number) => {
     console.log('Mobile image upload triggered for index:', index);
 
+    // Show user guidance first
+    toast.info('Opening file manager... Please select an image from your gallery', {
+      duration: 3000
+    });
+
     // Remove any existing temporary inputs
     const existingInputs = document.querySelectorAll('input[data-mobile-upload]');
     existingInputs.forEach(input => document.body.removeChild(input));
@@ -281,6 +286,7 @@ export const PostAdPage = () => {
 
     tempInput.oncancel = () => {
       console.log('File selection cancelled in mobile fallback');
+      toast.info('File selection cancelled. You can try again.');
       if (document.body.contains(tempInput)) {
         document.body.removeChild(tempInput);
       }
@@ -289,7 +295,7 @@ export const PostAdPage = () => {
     // Add error handling
     tempInput.onerror = (e) => {
       console.error('Error in mobile file input:', e);
-      toast.error('Error accessing camera/gallery. Please try again.');
+      toast.error('Error accessing file manager. Please try again.');
       if (document.body.contains(tempInput)) {
         document.body.removeChild(tempInput);
       }
@@ -305,7 +311,7 @@ export const PostAdPage = () => {
       console.log('Mobile file input clicked successfully');
     } catch (error) {
       console.error('Error clicking mobile file input:', error);
-      toast.error('Unable to open camera/gallery. Please try again.');
+      toast.error('Unable to open file manager. Please try again.');
       if (document.body.contains(tempInput)) {
         document.body.removeChild(tempInput);
       }
@@ -609,7 +615,9 @@ export const PostAdPage = () => {
               <div className="text-xs text-muted-foreground bg-slate-700/30 p-3 rounded-lg">
                 <p className="font-medium mb-1">📱 Mobile Tips:</p>
                 <ul className="space-y-1 text-xs">
-                  <li>• Tap the image area to select from your photo gallery</li>
+                  <li>• Tap the image area to open your phone's file manager</li>
+                  <li>• Navigate to your photo gallery or downloads folder</li>
+                  <li>• Select the image you want to upload</li>
                   <li>• Make sure your images are clear and well-lit</li>
                   <li>• Each image should be under 5MB</li>
                   <li>• Supported formats: JPG, PNG, GIF, WebP</li>

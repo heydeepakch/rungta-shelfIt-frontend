@@ -42,6 +42,15 @@ export const PostAdPage = () => {
     checkMobile();
   }, []);
 
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      imagePreviews.forEach(url => {
+        URL.revokeObjectURL(url);
+      });
+    };
+  }, [imagePreviews]);
+
   // Test file input functionality on mobile
   const testFileInput = () => {
     console.log('Testing file input functionality...');
@@ -81,78 +90,75 @@ export const PostAdPage = () => {
       userAgent: navigator.userAgent
     });
 
-    // Add a small delay to ensure the file input has processed the selection
-    setTimeout(() => {
-      if (e.target.files && e.target.files.length > 0) {
-        const files = Array.from(e.target.files);
-        const maxFileSize = 5 * 1024 * 1024; // 5MB
-        const maxFiles = 5;
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
+      const maxFiles = 5;
 
-        console.log('Files selected:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
+      console.log('Files selected:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
 
-        // Check file count
-        if (formData.images.length + files.length > maxFiles) {
-          toast.error(`Maximum ${maxFiles} images allowed. You can upload ${maxFiles - formData.images.length} more.`);
+      // Check file count
+      if (formData.images.length + files.length > maxFiles) {
+        toast.error(`Maximum ${maxFiles} images allowed. You can upload ${maxFiles - formData.images.length} more.`);
+        return;
+      }
+
+      // Validate each file
+      const validFiles: File[] = [];
+      const validPreviews: string[] = [];
+
+      files.forEach((file, fileIndex) => {
+        console.log(`Processing file ${fileIndex}:`, { name: file.name, size: file.size, type: file.type });
+
+        // Check file size
+        if (file.size > maxFileSize) {
+          toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
           return;
         }
 
-        // Validate each file
-        const validFiles: File[] = [];
-        const validPreviews: string[] = [];
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+          toast.error(`${file.name} is not an image file. Please upload JPG, PNG, GIF, or WebP files.`);
+          return;
+        }
 
-        files.forEach((file, fileIndex) => {
-          console.log(`Processing file ${fileIndex}:`, { name: file.name, size: file.size, type: file.type });
+        // Check file size in MB for user-friendly message
+        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        if (file.size > maxFileSize) {
+          toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 5MB.`);
+          return;
+        }
 
-          // Check file size
-          if (file.size > maxFileSize) {
-            toast.error(`${file.name} is too large. Maximum file size is 5MB.`);
-            return;
-          }
+        validFiles.push(file);
+        const objectUrl = URL.createObjectURL(file);
+        validPreviews.push(objectUrl);
+        console.log(`File ${file.name} validated successfully, created object URL:`, objectUrl);
+      });
 
-          // Check file type
-          if (!file.type.startsWith('image/')) {
-            toast.error(`${file.name} is not an image file. Please upload JPG, PNG, GIF, or WebP files.`);
-            return;
-          }
+      // Update state with valid files only
+      if (validFiles.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          images: [...prev.images, ...validFiles].slice(0, maxFiles)
+        }));
 
-          // Check file size in MB for user-friendly message
-          const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-          if (file.size > maxFileSize) {
-            toast.error(`${file.name} (${fileSizeMB}MB) is too large. Maximum file size is 5MB.`);
-            return;
-          }
+        setImagePreviews(prev => [...prev, ...validPreviews].slice(0, maxFiles));
 
-          validFiles.push(file);
-          const objectUrl = URL.createObjectURL(file);
-          validPreviews.push(objectUrl);
-          console.log(`File ${file.name} validated successfully, created object URL:`, objectUrl);
-        });
-
-        // Update state with valid files only
-        if (validFiles.length > 0) {
-          setFormData(prev => ({
-            ...prev,
-            images: [...prev.images, ...validFiles].slice(0, maxFiles)
-          }));
-
-          setImagePreviews(prev => [...prev, ...validPreviews].slice(0, maxFiles));
-
-          if (validFiles.length < files.length) {
-            toast.warning(`${validFiles.length} of ${files.length} files were uploaded. Some files were skipped due to size or type restrictions.`);
-          } else {
-            toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} uploaded successfully!`);
-          }
+        if (validFiles.length < files.length) {
+          toast.warning(`${validFiles.length} of ${files.length} files were uploaded. Some files were skipped due to size or type restrictions.`);
         } else {
-          console.log('No valid files found');
-          toast.error('No valid images were selected. Please try again.');
+          toast.success(`${validFiles.length} image${validFiles.length > 1 ? 's' : ''} uploaded successfully!`);
         }
       } else {
-        console.log('No files selected or files array is empty');
-        if (isMobile) {
-          toast.error('No image selected. Please try tapping the image area again.');
-        }
+        console.log('No valid files found');
+        toast.error('No valid images were selected. Please try again.');
       }
-    }, 100);
+    } else {
+      console.log('No files selected or files array is empty');
+      if (isMobile) {
+        toast.error('No image selected. Please try tapping the image area again.');
+      }
+    }
 
     // Reset the input value to allow selecting the same file again
     e.target.value = '';
@@ -179,11 +185,7 @@ export const PostAdPage = () => {
     tempInput.accept = 'image/jpeg,image/jpg,image/png,image/gif,image/webp';
     tempInput.multiple = false;
     tempInput.style.display = 'none';
-    tempInput.setAttribute('capture', 'user');
-    
-    
-
-    // Add mobile-specific attributes
+    tempInput.setAttribute('data-mobile-upload', 'true');
     tempInput.setAttribute('data-index', index.toString());
 
     tempInput.onchange = (e) => {
@@ -191,7 +193,11 @@ export const PostAdPage = () => {
       console.log('Mobile file input change event:', { files: target.files, index });
       if (target.files && target.files.length > 0) {
         console.log('File selected in mobile fallback:', target.files[0]);
-        handleImageUpload({ target } as React.ChangeEvent<HTMLInputElement>, index);
+        // Create a synthetic event to pass to handleImageUpload
+        const syntheticEvent = {
+          target: target
+        } as React.ChangeEvent<HTMLInputElement>;
+        handleImageUpload(syntheticEvent, index);
       } else {
         console.log('No files selected in mobile fallback');
         toast.error('No image selected. Please try again.');
@@ -220,22 +226,25 @@ export const PostAdPage = () => {
 
     document.body.appendChild(tempInput);
 
-    // Use setTimeout to ensure the input is properly attached
-    setTimeout(() => {
-      try {
-        tempInput.click();
-        tempInput.focus();
-      } catch (error) {
-        console.error('Error clicking mobile file input:', error);
-        toast.error('Unable to open camera/gallery. Please try again.');
-        if (document.body.contains(tempInput)) {
-          document.body.removeChild(tempInput);
-        }
+    // Trigger file selection immediately
+    try {
+      tempInput.click();
+      tempInput.focus();
+    } catch (error) {
+      console.error('Error clicking mobile file input:', error);
+      toast.error('Unable to open camera/gallery. Please try again.');
+      if (document.body.contains(tempInput)) {
+        document.body.removeChild(tempInput);
       }
-    }, 100);
+    }
   };
 
   const removeImage = (index: number) => {
+    // Revoke the object URL to free memory
+    if (imagePreviews[index]) {
+      URL.revokeObjectURL(imagePreviews[index]);
+    }
+
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
@@ -243,8 +252,6 @@ export const PostAdPage = () => {
 
     setImagePreviews(prev => {
       const newPreviews = prev.filter((_, i) => i !== index);
-      // Revoke the object URL to free memory
-      URL.revokeObjectURL(prev[index]);
       return newPreviews;
     });
 
@@ -451,6 +458,11 @@ export const PostAdPage = () => {
                           src={imagePreviews[index]}
                           alt={`Preview ${index + 1}`}
                           className="w-full h-full object-cover rounded-lg"
+                          onLoad={() => console.log(`Image ${index + 1} loaded successfully`)}
+                          onError={(e) => {
+                            console.error(`Error loading image ${index + 1}:`, e);
+                            toast.error(`Failed to load image ${index + 1}. Please try again.`);
+                          }}
                         />
                         <button
                           type="button"
